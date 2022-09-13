@@ -23,7 +23,7 @@ Pid pid0; //上 テーブル回転
 int up_tate = 0; //上 たて
 int up_yoko = 0; //上 よこ
 int up_vac = 0; //上 吸盤
-int up_table_revo = 0; //上 テーブル回転 can値
+float up_table_revo = 0; //上 テーブル回転 can値
 int robot_stop = 0;
 int can_robot_stop = 0; //受信用
 int send_can_robot_stop = 0; //送信用
@@ -51,7 +51,8 @@ void setup() {
   pinMode(16, OUTPUT); //電磁弁
   pinMode(17, OUTPUT); //真空モータ
   pinMode(10, OUTPUT);
-  pid0.init(6, 0.0001, 0.001);
+//  pid0.init(6, 0.0001, 0.001);
+  pid0.init(3, 0, 0);
   mot0.init(20, 10);
   pinMode(9, OUTPUT);
   mot1.init(21, 9);
@@ -127,14 +128,15 @@ void loop() {
   //コントローラー値受信
   up_tate = map(testch[3], 364, 1684, -100, 100); //上 たて
   up_yoko = map(testch[2], 364, 1684, -255, 255); //上 よこ
-  up_table_revo = map(testch[0], 364, 1684, -1, 1); //上 テーブル回転
-  if (up_table_revo == 1 || up_table_revo == -1) {
-    if (timers > 1) {
+//  up_table_revo = map(testch[0], 364, 1684, -1, 1); //上 テーブル回転
+  up_table_revo = (float(testch[0])-1024)/100;
+//  if (up_table_revo == 1 || up_table_revo == -1) {
+    if (timers > 8) {
       timers = 0;
-    } else if (timers < 1) {
+    } else if (timers < 8) {
       up_table_revo = 0;
     }
-  }
+//  }
   timers++;
 
   //動作許可
